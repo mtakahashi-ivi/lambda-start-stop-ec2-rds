@@ -11,6 +11,7 @@ build({
   outfile: "../dist/index.js",
   format: "cjs",
   sourcemap: true,
-  minify: true,
-  treeShaking: true
+  minify: false,
+  treeShaking: true,
+  external: ['aws-sdk'], // Lambda環境に組み込み済み
 }).catch(() => process.exit(1));

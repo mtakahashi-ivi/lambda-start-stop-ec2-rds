@@ -56,10 +56,19 @@ lambda-terraform-prep/
 
 ## 📝 初回セットアップ
 
-Terraform の状態管理に使用する AWS バックエンドへの認証のため、`terraform init` 実行時には AWS プロファイルを環境変数で明示します。
+Terraform のバックエンドを初期化します、`terraform init` 実行時にはバックエンドの設定 `s3.backend_config.tfvars` を指定してください。
+
+```hcl:title=s3.backend_config.tfvars
+# bucket 名
+bucket   = "terraform-tfstates-111222333444"
+# アクセスに使うAWSプロファイル
+profile  = "dev"
+# リージョン
+region   = "ap-northeast-1"
+```
 
 ```bash
-AWS_PROFILE=init-profile terraform -chdir=terraform init
+terraform -chdir=terraform init -backend-config="./s3.backend_config.tfvars"
 ```
 
 その後、`terraform.tfvars` に以下のようにプロファイルを設定してください：

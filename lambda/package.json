@@ -1,16 +1,20 @@
 {
-  "name": "lambda-terraform-prep",
+  "name": "lambda-start-stop-ec2-rds",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {
-    "test": "node lambda/test.mjs"
-  },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "esbuild": "^0.25.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ec2": "^3.803.0",
+    "@aws-sdk/client-rds": "^3.803.0",
+    "@aws-sdk/client-resource-groups-tagging-api": "^3.803.0",
+    "@aws-sdk/client-s3": "^3.803.0",
+    "node-fetch": "^3.3.2"
   }
 }

@@ -1,8 +1,10 @@
-import { sayHello } from "./hello";
+import { performStart, performStop } from "./start_stop_env";
 
-export const handler = async (): Promise<{ statusCode: number; body: string }> => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: sayHello() }),
-  };
+export const startHandler = async (event: any): Promise<void> => {
+  const checkHoliday = event.checkHoliday === true;
+  await performStart(checkHoliday);
+};
+
+export const stopHandler = async (event: any): Promise<void> => {
+  await performStop();
 };

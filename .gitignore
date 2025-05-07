@@ -9,10 +9,11 @@ terraform.tfvars.json
 override.tf
 override.tf.json
 *.auto.tfvars
+*.backend_config.tfvars
 
 # Lambda build artifacts
 dist/
-index.zip
+function.zip
 
 # Node.js
 node_modules/
