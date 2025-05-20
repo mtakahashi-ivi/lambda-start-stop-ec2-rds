@@ -20,3 +20,13 @@ variable "aws_region" {
   default     = "ap-northeast-1"
   description = "AWS リージョン"
 }
+
+variable "holiday_s3_bucket" {
+  description = "S3バケット名 (祝日データ用)"
+  type        = string
+}
+
+variable "holiday_s3_key" {
+  description = "S3キー名 (祝日データ用)"
+  type        = string
+}

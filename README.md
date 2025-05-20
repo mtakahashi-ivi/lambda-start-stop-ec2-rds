@@ -1,7 +1,6 @@
-# lambda-terraform-prep
+# lambda-start-stop-ec2-rds
 
-TypeScript + esbuild で実装された AWS Lambda 関数を Terraform でデプロイ・管理するプロジェクトです。  
-トイル（Toil）を減らし、開発と運用の自動化を目指す構成になっています。
+EC2 と Aurora で構成される環境(開発向け環境)の定時起動/停止を行うプロジェクトです。
 
 ## 📌 概要
 
@@ -19,26 +18,28 @@ Zenn に連動した解説記事があります → [Lambda × Terraform で始�
 ## 📁 ディレクトリ構成
 
 ```
-lambda-terraform-prep/
+lambda-start-stop-ec2-rds/
+.
 ├── Makefile
+├── .gitignore
 ├── .node-version
 ├── .terraform-version
-├── lambda/
-│   ├── src/
-│   │   ├── hello.ts
-│   │   └── index.ts
-│   ├── tsconfig.json
-│   ├── build.mjs
-│   └── test.mjs
-├── dist/              # ビルド成果物
-├── index.zip          # Lambda デプロイ用パッケージ
-├── terraform/
-│   ├── backend.tf
-│   ├── main.tf
-│   ├── provider.tf
-│   ├── variables.tf
-│   └── outputs.tf
-├── terraform.tfvars   # 実行時変数（.gitignore 推奨）
+├── README.md
+├── lambda
+│   ├── build.mjs
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   │   ├── common.ts
+│   │   ├── index.ts
+│   │   ├── start_stop_env.ts
+│   │   └── testLocal.ts
+│   └── tsconfig.json
+└── terraform
+    ├── backend.tf
+    ├── main.tf
+    ├── provider.tf
+    └── variables.tf
 ```
 
 ---
@@ -48,9 +49,7 @@ lambda-terraform-prep/
 - Node.js 22.14.0（`nodenv` 管理）
 - Terraform 1.11.3（`tfenv` 管理）
 - bash シェル
-- AWS 認証情報（S3 バックエンド用）設定済み
-
-`.node-version`, `.terraform-version` によって自動切り替え可能です。
+- AWS 認証情報設定済み
 
 ---
 
@@ -66,6 +65,8 @@ profile  = "dev"
 # リージョン
 region   = "ap-northeast-1"
 ```
+
+> ⚠️ `terraform.tfvars` は `.gitignore` に含め、Git 管理対象にしないことを想定しています。
 
 ```bash
 terraform -chdir=terraform init -backend-config="./s3.backend_config.tfvars"
@@ -86,7 +87,6 @@ aws_region  = "ap-northeast-1"
 
 | コマンド             | 内容                                                  |
 |----------------------|-------------------------------------------------------|
-| `make build`         | TypeScript を esbuild でビルド（自動的に npm install）|
 | `make zip`           | Lambda 用パッケージ作成（build + prune + zip）       |
 | `make plan`          | Terraform プラン表示                                  |
 | `make apply`         | Terraform 適用（-auto-approve なし）                  |
@@ -96,11 +96,3 @@ aws_region  = "ap-northeast-1"
 
 ---
 
-## ✅ 補足
-
-- Lambda のハンドラーは `src/index.ts` にあり、ロジック本体は `hello.ts` に分離されています。
-- `test.mjs` を使って Lambda をローカルで実行することが可能です。
-- IAM ロールや関数名などの命名は、次の規則に従っています：
-  ```
-  <リソース種別>-ltprep-<用途>
-  ```

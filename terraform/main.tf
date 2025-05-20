@@ -75,6 +75,44 @@ resource "aws_iam_role_policy_attachment" "attach_ops_start_stop" {
   policy_arn = aws_iam_policy.pl-ops-start_stop_ec2_aurora.arn
 }
 
+# 休日情報を保存する S3 バケットへのアクセス権限
+resource "aws_iam_policy" "pl-ops-lambda-holiday-s3-access" {
+  name        = "pl-ops-lambda-holiday-s3-access"
+  description = "Allow Lambda to access holiday S3 bucket and key"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:HeadObject"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.holiday_s3_bucket}/${var.holiday_s3_key}"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.holiday_s3_bucket}"
+        ]
+      }
+    ]
+  })
+}
+
+# ポリシー(pl-ops-lambda-holiday-s3-access)を ロール(rl-ops-start_stop_ec2_aurora) にアタッチ
+resource "aws_iam_role_policy_attachment" "attach-ops_-holiday_s3" {
+  role       = aws_iam_role.rl-ops-start_stop_ec2_aurora.name
+  policy_arn = aws_iam_policy.pl-ops-lambda-holiday-s3-access.arn
+}
+
+
 # ---------------------------------------------
 #
 #  EC2, Aurora を起動/停止する Lambda
@@ -92,6 +130,12 @@ resource "aws_lambda_function" "func-ops-start_ec2_aurora" {
   handler          = "index.startHandler"   # start 用ハンドラ
   source_code_hash = filebase64sha256("${path.module}/../function.zip")
   timeout          = 900 # 15min
+  environment {
+    variables = {
+      HOLIDAY_S3_BUCKET = var.holiday_s3_bucket
+      HOLIDAY_S3_KEY    = var.holiday_s3_key
+    }
+  }
 }
 
 # Lambda 関数: Stop
@@ -102,7 +146,6 @@ resource "aws_lambda_function" "func-ops-stop_ec2_aurora" {
   runtime          = "nodejs22.x"
   handler          = "index.stopHandler"    # stop 用ハンドラ
   source_code_hash = filebase64sha256("${path.module}/../function.zip")
-  timeout          = 900 # 15min
 }
 
 

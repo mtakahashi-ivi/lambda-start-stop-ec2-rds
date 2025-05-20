@@ -2,14 +2,15 @@ LAMBDA_DIR=lambda
 DIST_DIR=dist
 ZIP_NAME=function.zip
 
-.PHONY: build zip zip-prune zip-package plan apply clean test-local test-local-start test-local-stop
+.PHONY: build zip zip-prune zip-package plan apply clean test-local-%
 
 install-node-modules:
 	cd $(LAMBDA_DIR) && npm install
 
 build: install-node-modules
-	cd $(LAMBDA_DIR) && node build.mjs
+	cd $(LAMBDA_DIR) && BUILD_TEST_LOCAL=$(BUILD_TEST_LOCAL) node build.mjs
 
+zip: BUILD_TEST_LOCAL = 0
 zip: clean zip-prune zip-package
 
 zip-prune: build
@@ -31,6 +32,7 @@ apply:
 destroy:
 	cd terraform && terraform destroy
 
+test-local-%: BUILD_TEST_LOCAL = 1
 test-local-%: build
 	node $(DIST_DIR)/testLocal.js ${@:test-local-%=%}
 
