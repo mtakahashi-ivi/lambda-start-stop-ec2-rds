@@ -97,7 +97,6 @@ export async function isHolidayOrWeekend(
             ContentType: "application/json",
           })
         );
-        holidayData = data;
       } else {
         const obj = await s3.send(
           new GetObjectCommand({ Bucket: bucket, Key: key })

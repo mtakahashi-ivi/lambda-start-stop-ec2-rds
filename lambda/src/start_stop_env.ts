@@ -10,7 +10,7 @@ import {
   StartInstancesCommand,
   StopInstancesCommand,
 } from "@aws-sdk/client-ec2";
-import { getResourceMap, isHolidayOrWeekend, REGION } from "./common";
+import { getResourceMap, isHolidayOrWeekend, REGION } from "./common.js";
 
 const rdsClient = new RDSClient({ region: REGION });
 const ec2Client = new EC2Client({ region: REGION });
@@ -33,7 +33,7 @@ export async function waitForRDSAvailable(clusterId: string): Promise<void> {
   const clusterDesc = await rdsClient.send(
     new DescribeDBClustersCommand({ DBClusterIdentifier: clusterId })
   );
-  const writer = clusterDesc.DBClusters?.[0]?.DBClusterMembers?.find((m) => m.IsWriter);
+  const writer = clusterDesc.DBClusters?.[0]?.DBClusterMembers?.find((m) => m.IsClusterWriter);
   if (!writer?.DBInstanceIdentifier) {
     console.warn(`Writer 未検出: ${clusterId}`);
     return;

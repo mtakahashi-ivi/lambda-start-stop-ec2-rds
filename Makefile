@@ -34,7 +34,7 @@ destroy:
 
 test-local-%: BUILD_TEST_LOCAL = 1
 test-local-%: build
-	node $(DIST_DIR)/testLocal.js ${@:test-local-%=%}
+	AWS_PROFILE=$(AWS_PROFILE) node $(DIST_DIR)/testLocal.js ${@:test-local-%=%}
 
 clean:
 	rm -rf $(DIST_DIR) $(ZIP_NAME)

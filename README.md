@@ -87,12 +87,34 @@ aws_region  = "ap-northeast-1"
 
 | コマンド             | 内容                                                  |
 |----------------------|-------------------------------------------------------|
+| `make test-local-*`  | ローカルで testLocal.ts のテスト実行                  |
 | `make zip`           | Lambda 用パッケージ作成（build + prune + zip）       |
 | `make plan`          | Terraform プラン表示                                  |
 | `make apply`         | Terraform 適用（-auto-approve なし）                  |
 | `make destroy`       | Terraform によるインフラの削除                      |
-| `make test-local`    | ローカルで sayHello 関数をテスト実行                  |
 | `make clean`         | zip や dist、state ファイルのクリーンアップ           |
+
+## 🧪 テスト実行: Makefile コマンド
+
+| コマンド             | 内容                                                  |
+|----------------------|-------------------------------------------------------|
+| `make test-local-testHolidayTypes`  | ローカルで isHolidayOrWeekend のテスト                  |
+| `make test-local-testGetResourceMap`  | ローカルで getResourceMap のテスト                  |
+
+
+
+### AWS_PROFILE を使ったローカルテスト実行例
+
+AWS認証情報としてプロファイルを使いたい場合、以下のように `AWS_PROFILE` を指定して実行できます。
+
+```bash
+make AWS_PROFILE=your_profile_name test-local-testGetResourceMap
+```
+
+この場合、AWS SDK は `~/.aws/credentials` の `your_profile_name` を利用してAPIにアクセスします。
+
+- `AWS_PROFILE` を省略した場合は、デフォルトプロファイルや環境変数の認証情報が使われます。
+- Makefile で `AWS_PROFILE=$(AWS_PROFILE)` を node 実行時に渡しているため、明示的な指定が可能です。
 
 ---
 

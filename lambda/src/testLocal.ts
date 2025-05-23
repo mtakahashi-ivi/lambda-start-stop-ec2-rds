@@ -6,8 +6,8 @@ import {
   startRDSCluster,
   waitForRDSAvailable,
   stopRDSCluster,
-} from "./start_stop_env";
-import { isHolidayOrWeekend, getResourceMap } from "./common";
+} from "./start_stop_env.js";
+import { isHolidayOrWeekend, getResourceMap } from "./common.js";
 
 async function testCheckHolidayBehavior() {
   console.log("-- checkHoliday = true --");
